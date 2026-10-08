@@ -1,23 +1,25 @@
 # half
 [components.dev."base/half/stage"]
+optional = true
 [components.doc."base/half/stage"]
+optional = true
 
 
 # rocm_smi_lib
 [components.lib."base/rocm_smi_lib/stage"]
-optional = "windows"
+optional = true
 [components.run."base/rocm_smi_lib/stage"]
-optional = "windows"
+optional = true
 include = [
   "bin/**",
   "libexec/**",
 ]
 [components.dbg."base/rocm_smi_lib/stage"]
-optional = "windows"
+optional = true
 [components.dev."base/rocm_smi_lib/stage"]
-optional = "windows"
+optional = true
 [components.doc."base/rocm_smi_lib/stage"]
-optional = "windows"
+optional = true
 
 # rocm-cmake
 [components.dev."base/rocm-cmake/stage"]
@@ -36,20 +38,20 @@ include = "lib/rocmmod"
 
 # rocprofiler-register
 [components.lib."base/rocprofiler-register/stage"]
-optional = "windows"
+optional = true
 [components.run."base/rocprofiler-register/stage"]
-optional = "windows"
+optional = true
 exclude = [
   "share/rocprofiler-register/tests/**",
 ]
 [components.dbg."base/rocprofiler-register/stage"]
-optional = "windows"
+optional = true
 [components.dev."base/rocprofiler-register/stage"]
-optional = "windows"
+optional = true
 [components.doc."base/rocprofiler-register/stage"]
-optional = "windows"
+optional = true
 [components.test."base/rocprofiler-register/stage"]
-optional = "windows"
+optional = true
 include = [
   "share/rocprofiler-register/tests/**",
 ]

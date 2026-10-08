@@ -19,6 +19,7 @@ include = [
   "lib/llvm/lib/*.bc",
   "lib/llvm/lib/*.ll",
   "lib/llvm/lib/*.modules.json",
+  "lib/llvm/spvcpu/**",
   "lib/llvm/include/c++/**",
 ]
 force_include = [

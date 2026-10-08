@@ -25,6 +25,7 @@ endif()
 # rocm-kpack
 ################################################################################
 
+if(NOT THEROCK_HIP_CPU_ONLY)
 therock_cmake_subproject_declare(rocm-kpack
   EXTERNAL_SOURCE_DIR "${THEROCK_ROCM_SYSTEMS_SOURCE_DIR}/shared/kpack"
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/rocm-kpack"
@@ -60,6 +61,7 @@ therock_provide_artifact(core-kpack
   SUBPROJECT_DEPS
     rocm-kpack
 )
+endif()
 
 if(THEROCK_ENABLE_CORE_AMDSMI)
 
@@ -118,6 +120,10 @@ if(WIN32)
   if(THEROCK_ENABLE_CORE_RUNTIME AND THEROCK_FLAG_HSA_WINDOWS_SHARED_RUNTIME)
     set(_therock_enable_hsa_runtime ON)
   endif()
+endif()
+
+if(THEROCK_HIP_CPU_ONLY)
+  set(_therock_enable_hsa_runtime OFF)
 endif()
 
 if(_therock_enable_hsa_runtime)
@@ -274,9 +280,11 @@ if(THEROCK_ENABLE_HIP_RUNTIME)
     )
   else()
     # Non-Windows CLR options.
+    if(NOT THEROCK_HIP_CPU_ONLY)
     list(APPEND HIP_CLR_RUNTIME_DEPS
       rocprofiler-register
     )
+    endif()
   endif()
   if(_therock_enable_hsa_runtime)
     list(APPEND HIP_CLR_RUNTIME_DEPS
@@ -285,6 +293,7 @@ if(THEROCK_ENABLE_HIP_RUNTIME)
     )
   endif()
 
+  if(NOT THEROCK_HIP_CPU_ONLY)
   therock_cmake_subproject_declare(hip-clr
     USE_DIST_AMDGPU_TARGETS
     EXTERNAL_SOURCE_DIR "${THEROCK_ROCM_SYSTEMS_SOURCE_DIR}/projects/clr"
@@ -320,13 +329,57 @@ if(THEROCK_ENABLE_HIP_RUNTIME)
     INTERFACE_INSTALL_RPATH_DIRS
       "lib"
   )
+  else()
+  therock_cmake_subproject_declare(hip-clr
+    USE_DIST_AMDGPU_TARGETS
+    EXTERNAL_SOURCE_DIR "${THEROCK_ROCM_SYSTEMS_SOURCE_DIR}/projects/clr"
+    BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/clr"
+    INTERFACE_PROGRAM_DIRS
+      bin
+    BACKGROUND_BUILD
+    COMPILER_TOOLCHAIN
+      "${_system_toolchain}"
+    CMAKE_ARGS
+      "-DTHEROCK_HIP_CPU_ONLY=${THEROCK_HIP_CPU_ONLY}"
+      "-DHIP_PLATFORM=amd"
+      "-DHIP_COMMON_DIR=${THEROCK_ROCM_SYSTEMS_SOURCE_DIR}/projects/hip"
+      "-DCLR_BUILD_HIP=ON"
+      "-DROCM_KPACK_ENABLED=OFF"
+      "-DUSE_NEW_HOSTCALL_IMPL=${THEROCK_USE_NEW_HOSTCALL_IMPL}"
+      ${_clr_comgr_dll_name_cmake_args}
+      # Legacy: Disable various auto-detection logic that breaks out of jail
+      # and can use local machine tools.
+      "-DHIPCC_BIN_DIR="
+      # ${HIP_CLR_CMAKE_ARGS}
+      "-DUSE_PROF_API=OFF"
+      "-D__HIP_ENABLE_PCH=OFF"
+      "-DHIP_ENABLE_ROCPROFILER_REGISTER=OFF"
+      "-DROCCLR_ENABLE_HSA=OFF"
+      "-DROCCLR_ENABLE_PAL=OFF"
+      "-DROCCLR_ENABLE_CPU=ON"
+    BUILD_DEPS
+      rocm-cmake
+    RUNTIME_DEPS
+      amd-llvm
+      amd-comgr
+      hipcc     # For hipconfig
+      rocm-core
+      ${HIP_CLR_RUNTIME_DEPS}
+    INTERFACE_LINK_DIRS
+      "lib"
+    INTERFACE_INSTALL_RPATH_DIRS
+      "lib"
+  )
+  endif()
   therock_cmake_subproject_glob_c_sources(hip-clr SUBDIRS .)
   therock_cmake_subproject_provide_package(hip-clr hip lib/cmake/hip)
   # TODO: Some projects resolve "hip" vs "HIP" so we advertise both, but this isn't
   # great.
   therock_cmake_subproject_provide_package(hip-clr HIP lib/cmake/hip)
   therock_cmake_subproject_provide_package(hip-clr hip-lang lib/cmake/hip-lang)
+  if(NOT THEROCK_HIP_CPU_ONLY)
   therock_cmake_subproject_provide_package(hip-clr hiprtc lib/cmake/hiprtc)
+  endif()
   therock_cmake_subproject_activate(hip-clr)
 
   therock_provide_artifact(core-hip
@@ -342,6 +395,7 @@ if(THEROCK_ENABLE_HIP_RUNTIME)
       hip-clr
   )
 
+  if(NOT THEROCK_HIP_CPU_ONLY)
   therock_test_validate_shared_lib(
     PATH clr/dist/lib
     LIB_NAMES
@@ -349,6 +403,13 @@ if(THEROCK_ENABLE_HIP_RUNTIME)
       libhiprtc-builtins.so
       libhiprtc.so
   )
+  else()
+  therock_test_validate_shared_lib(
+    PATH clr/dist/lib
+    LIB_NAMES
+      libamdhip64.so
+  )
+  endif()
   if(WIN32)
     ##############################################################################
     # hipInfo (from hip-tests)

@@ -218,6 +218,15 @@ option(THEROCK_USE_SAFE_DEPENDENCY_PROVIDER "Enable the safe dependency provider
 # like `THEROCK_ENABLE_${feature_name}` that takes its default value from the
 # `THEROCK_ENABLE_${group_name}` if a GROUP is present.
 ################################################################################
+
+option(THEROCK_HIP_CPU_ONLY
+  "Build only the host (CPU) HIP runtime and its minimal dependencies" OFF)
+if(THEROCK_HIP_CPU_ONLY)
+  set(THEROCK_ENABLE_ALL OFF CACHE BOOL "Forced off by THEROCK_HIP_CPU_ONLY" FORCE)
+  set(THEROCK_ENABLE_HIP_RUNTIME ON CACHE BOOL "Forced on by THEROCK_HIP_CPU_ONLY" FORCE)
+  set(THEROCK_ENABLE_COMPILER ON CACHE BOOL "Forced on by THEROCK_HIP_CPU_ONLY" FORCE)
+endif()
+
 option(THEROCK_ENABLE_ALL "Enables building of all feature groups" ON)
 option(THEROCK_ENABLE_CORE "Enable building of core libraries" "${THEROCK_ENABLE_ALL}")
 option(THEROCK_ENABLE_COMM_LIBS "Enable building of comm libraries" "${THEROCK_ENABLE_ALL}")
@@ -391,6 +400,7 @@ set(THEROCK_BUNDLED_AMDMESA)
 if(THEROCK_BUNDLE_SYSDEPS)
   message(STATUS "Building with bundled system dependencies enabled")
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    if(NOT THEROCK_HIP_CPU_ONLY)
     find_program(MESON_BUILD meson)
     if(NOT MESON_BUILD)
       message(FATAL_ERROR "Building with THEROCK_BUNDLE_SYSDEPS=ON on Linux requires (easiest: `pip install meson`)")
@@ -407,8 +417,11 @@ if(THEROCK_BUNDLE_SYSDEPS)
     set(THEROCK_BUNDLED_LIBNL therock-libnl)
     set(THEROCK_BUNDLED_NUMACTL therock-numactl)
     set(THEROCK_BUNDLED_SQLITE3 therock-sqlite3)
+    endif()
     set(THEROCK_BUNDLED_ZLIB therock-zlib)
+    if(NOT THEROCK_HIP_CPU_ONLY)
     set(THEROCK_BUNDLED_ZSTD therock-zstd)
+    endif()
     # Optional sysdeps (gated on their artifact feature flags)
     if(THEROCK_ENABLE_SYSDEPS_EXPAT)
       set(THEROCK_BUNDLED_EXPAT therock-expat)
@@ -497,10 +510,13 @@ endif()
 # don't be fooled).
 add_subdirectory(third-party/sysdeps)
 add_subdirectory(base)
+if(NOT THEROCK_HIP_CPU_ONLY)
 add_subdirectory(third-party/googletest)
+endif()
 add_subdirectory(compiler)
 add_subdirectory(third-party)
 add_subdirectory(core)
+if(NOT THEROCK_HIP_CPU_ONLY)
 add_subdirectory(debug-tools)
 # media-libs (rocdecode/rocjpeg) must be added before profiler: rocprofiler-sdk
 # performs optional find_package(rocdecode)/find_package(rocjpeg) for trace
@@ -520,15 +536,19 @@ add_subdirectory(comm-libs)
 add_subdirectory(cv-libs)
 add_subdirectory(math-libs)
 add_subdirectory(ml-libs)
+endif()
 
+if(NOT THEROCK_HIP_CPU_ONLY)
 if(THEROCK_BUILD_TESTING)
   add_subdirectory(examples)
+endif()
 endif()
 
 ################################################################################
 # Testing
 ################################################################################
 
+if(NOT THEROCK_HIP_CPU_ONLY)
 if(THEROCK_BUILD_TESTING)
   if(NOT WIN32)
     add_executable(
@@ -541,6 +561,7 @@ if(THEROCK_BUILD_TESTING)
     #   then add instructions in the README to run with a command like
     #   `./build/dlopen-hip install/amdhip64.dll`
   endif()
+endif()
 endif()
 
 ################################################################################

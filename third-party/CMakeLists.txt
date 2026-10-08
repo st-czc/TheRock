@@ -9,6 +9,10 @@
 
 add_custom_target(therock-third-party)
 
+if(THEROCK_HIP_CPU_ONLY)
+  return()
+endif()
+
 # googletest is declared before compiler/ (see the root CMakeLists.txt); attach
 # it to the aggregate here, where therock-third-party exists.
 add_dependencies(therock-third-party therock-googletest)

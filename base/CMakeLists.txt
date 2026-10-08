@@ -71,6 +71,7 @@ therock_cmake_subproject_activate(rocm-core)
 # rocm_smi_lib
 ################################################################################
 
+if(NOT THEROCK_HIP_CPU_ONLY)
 if(NOT WIN32)  # TODO(#36): Enable on Windows and/or make subproject inclusion generally optional
 
 therock_cmake_subproject_declare(rocm_smi_lib
@@ -154,6 +155,8 @@ therock_cmake_subproject_glob_c_sources(rocm-half
     include
 )
 therock_cmake_subproject_activate(rocm-half)
+list(APPEND _optional_artifact_deps rocm-half)
+endif(NOT THEROCK_HIP_CPU_ONLY)
 
 ################################################################################
 # Artifacts
@@ -173,6 +176,5 @@ therock_provide_artifact(base
     ${_optional_artifact_deps}
     rocm-cmake
     rocm-core
-    rocm-half
     therock-aux-overlay
 )

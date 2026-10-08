@@ -11,9 +11,9 @@ if(THEROCK_ENABLE_COMPILER)
     # in the RPATH when LLVM_ENABLE_PER_TARGET_RUNTIME_DIR=ON. This path
     # needs to be registered with the subproject so it will be included
     # on dependent subprojects.
-    if(EXISTS "${THEROCK_SOURCE_DIR}/compiler/amd-llvm/llvm/cmake/modules/GetHostTriple.cmake")
-      set(LLVM_MAIN_SRC_DIR "${THEROCK_SOURCE_DIR}/compiler/amd-llvm/llvm")
-      include("${THEROCK_SOURCE_DIR}/compiler/amd-llvm/llvm/cmake/modules/GetHostTriple.cmake")
+    if(EXISTS "${THEROCK_SOURCE_DIR}/compiler/llvm-project/llvm/cmake/modules/GetHostTriple.cmake")
+      set(LLVM_MAIN_SRC_DIR "${THEROCK_SOURCE_DIR}/compiler/llvm-project/llvm")
+      include("${THEROCK_SOURCE_DIR}/compiler/llvm-project/llvm/cmake/modules/GetHostTriple.cmake")
       get_host_triple(LLVM_HOST_TRIPLE)
 
     # The math-libs build does not sync the amd-llvm source directory as it just
@@ -91,7 +91,8 @@ if(THEROCK_ENABLE_COMPILER)
   therock_cmake_subproject_declare(amd-llvm
     USE_DIST_AMDGPU_TARGETS
     NO_INSTALL_RPATH  # See manual handling in the pre_hook.
-    EXTERNAL_SOURCE_DIR "amd-llvm"
+    EXTERNAL_SOURCE_DIR "llvm-project"
+    BINARY_DIR "amd-llvm"
     # Note that LLVM top level CMakeLists.txt is in the llvm subdir of the
     # monorepo.
     CMAKE_LISTS_RELPATH "llvm"
@@ -124,7 +125,6 @@ if(THEROCK_ENABLE_COMPILER)
       -DCLANG_DEFAULT_LINKER=lld
       -DCLANG_DEFAULT_RTLIB=compiler-rt
       -DCLANG_DEFAULT_UNWINDLIB=libgcc
-      -DCLANG_ENABLE_AMDCLANG=ON
       -DLLVM_INSTALL_TOOLCHAIN_ONLY=OFF
       -DLLVM_BUILD_LLVM_C_DYLIB=OFF
 
@@ -191,13 +191,14 @@ if(THEROCK_ENABLE_COMPILER)
   endif()
   therock_cmake_subproject_activate(amd-llvm)
 
-
+  if(NOT THEROCK_HIP_CPU_ONLY)
   # Comgr's gtest suite needs a googletest provider. therock-googletest is
   # declared before compiler/ (see the root CMakeLists.txt) so amd-comgr can
   # depend on the single shared instance rather than a compiler-local copy.
   set(_comgr_gtest_deps)
   if(THEROCK_BUILD_COMGR_TESTS)
     set(_comgr_gtest_deps therock-googletest)
+  endif()
   endif()
 
 
@@ -237,6 +238,7 @@ if(THEROCK_ENABLE_COMPILER)
       # symbols inside libamd_comgr.so, preventing symbol interposition without
       # requiring namespace isolation via dlmopen.
       -DCOMGR_STATIC_LLVM=ON
+      "-DLLVM_MAIN_SRC_DIR=${THEROCK_SOURCE_DIR}/compiler/llvm-project/llvm"
       -DTHEROCK_BUILD_COMGR_TESTS=${THEROCK_BUILD_COMGR_TESTS}
       "-DLLVM_VERSION_SUFFIX=-rocm${ROCM_MAJOR_VERSION}"
       -DLLVM_ENABLE_SYMBOL_VERSIONING=ON
