@@ -71,8 +71,12 @@ if(NOT WIN32)
     COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/bin"
     COMMAND "${CMAKE_COMMAND}" -E create_symlink "lib/llvm" "${CMAKE_CURRENT_BINARY_DIR}/llvm"
     COMMAND "${CMAKE_COMMAND}" -E create_symlink "lib/llvm/amdgcn" "${CMAKE_CURRENT_BINARY_DIR}/amdgcn"
-    COMMAND "${CMAKE_COMMAND}" -E create_symlink "../lib/llvm/bin/amdlld" "${CMAKE_CURRENT_BINARY_DIR}/bin/amdlld"
-    COMMAND "${CMAKE_COMMAND}" -E create_symlink "../lib/llvm/bin/amdllvm" "${CMAKE_CURRENT_BINARY_DIR}/bin/amdllvm"
+    COMMAND "${CMAKE_COMMAND}" -E create_symlink "lib/llvm/spvcpu" "${CMAKE_CURRENT_BINARY_DIR}/spvcpu"
+    COMMAND "${CMAKE_COMMAND}" -E create_symlink "../lib/llvm/bin/clang" "${CMAKE_CURRENT_BINARY_DIR}/bin/clang"
+    COMMAND "${CMAKE_COMMAND}" -E create_symlink "../lib/llvm/bin/clang++" "${CMAKE_CURRENT_BINARY_DIR}/bin/clang++"
+    COMMAND "${CMAKE_COMMAND}" -E create_symlink "../lib/llvm/bin/clang-cl" "${CMAKE_CURRENT_BINARY_DIR}/bin/clang-cl"
+    COMMAND "${CMAKE_COMMAND}" -E create_symlink "../lib/llvm/bin/clang-cpp" "${CMAKE_CURRENT_BINARY_DIR}/bin/clang-cpp"
+    COMMAND "${CMAKE_COMMAND}" -E create_symlink "../lib/llvm/bin/lld" "${CMAKE_CURRENT_BINARY_DIR}/bin/lld"
     COMMAND "${CMAKE_COMMAND}" -E create_symlink "../lib/llvm/bin/offload-arch" "${CMAKE_CURRENT_BINARY_DIR}/bin/offload-arch"
   )
   # llvm and amdgcn are symlinks to directories; install(FILES) rejects
@@ -87,8 +91,11 @@ if(NOT WIN32)
       \"\${CMAKE_INSTALL_PREFIX}/amdgcn\" SYMBOLIC)
   ")
   install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/bin/amdlld"
-    "${CMAKE_CURRENT_BINARY_DIR}/bin/amdllvm"
+    "${CMAKE_CURRENT_BINARY_DIR}/bin/clang"
+    "${CMAKE_CURRENT_BINARY_DIR}/bin/clang++"
+    "${CMAKE_CURRENT_BINARY_DIR}/bin/clang-cl"
+    "${CMAKE_CURRENT_BINARY_DIR}/bin/clang-cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/bin/lld"
     "${CMAKE_CURRENT_BINARY_DIR}/bin/offload-arch"
     DESTINATION bin
   )
