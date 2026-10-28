@@ -458,6 +458,12 @@ type = "target-neutral"
 artifact_deps = []
 feature_group = "HOST_MATH"  # Controlled by THEROCK_ENABLE_HOST_MATH (OFF by default)
 
+[artifacts.openblas]
+artifact_group = "third-party-libs"
+type = "target-neutral"
+artifact_deps = []
+feature_group = "HOST_MATH"  # Controlled by THEROCK_ENABLE_HOST_MATH (OFF by default)
+
 [artifacts.host-suite-sparse]
 artifact_group = "third-party-libs"
 type = "target-neutral"

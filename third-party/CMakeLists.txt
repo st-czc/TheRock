@@ -10,6 +10,7 @@
 add_custom_target(therock-third-party)
 
 if(THEROCK_HIP_CPU_ONLY)
+  add_subdirectory(openblas)
   return()
 endif()
 

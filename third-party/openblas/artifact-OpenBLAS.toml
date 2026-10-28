@@ -1,0 +1,5 @@
+# therock-openblas
+[components.lib."third-party/openblas/openblas/stage"]
+[components.dbg."third-party/openblas/openblas/stage"]
+[components.dev."third-party/openblas/openblas/stage"]
+[components.doc."third-party/openblas/openblas/stage"]
