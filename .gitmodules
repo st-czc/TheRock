@@ -9,6 +9,7 @@
 [submodule "llvm-project"]
 	path = compiler/amd-llvm
 	url = https://github.com/st-czc/llvm-project.git
+	branch = hipcpu-amd-llvm
 	shallow = true
 	# Branch follows the weekly format: amd-compiler-YYYY-MM-DD
 [submodule "rocm-cmake"]
@@ -17,12 +18,12 @@
 	branch = mainline
 [submodule "rocm-libraries"]
 	path = rocm-libraries
-	url = https://github.com/ROCm/rocm-libraries
-	branch = develop
+	url = https://github.com/st-czc/rocm-libraries
+	branch = spvcpu-unknown-hipcpu
 [submodule "rocm-systems"]
 	path = rocm-systems
 	url = https://github.com/st-czc/rocm-systems.git
-	branch = develop
+	branch = spvcpu-unknown-hipcpu
 [submodule "spirv-llvm-translator"]
 	path = compiler/spirv-llvm-translator
 	url = https://github.com/ROCm/SPIRV-LLVM-Translator.git
@@ -46,7 +47,9 @@
 [submodule "hipcpu-passes"]
 	path = compiler/hipcpu-passes
 	url = https://github.com/st-czc/intel-llvm.git
+	branch = hipcpu-passes-2026-10-16
 	shallow = true
 [submodule "llvm-project-hipcpu"]
 	path = compiler/llvm-project
 	url = https://github.com/st-czc/llvm-project.git
+	branch = spvcpu-unknown-hipcpu
