@@ -83,7 +83,7 @@ endif()
 # we have never enabled benchmarks,
 # disabling more explicitly after a bug fix enabled.
 set(LLVM_INCLUDE_BENCHMARKS OFF)
-set(LLVM_TARGETS_TO_BUILD "AMDGPU;Native;SPIRV" CACHE STRING "Enable LLVM Targets" FORCE)
+set(LLVM_TARGETS_TO_BUILD "AMDGPU;Native;RISCV;X86;SPIRV" CACHE STRING "Enable LLVM Targets" FORCE)
 
 # Packaging.
 set(PACKAGE_VENDOR "AMD" CACHE STRING "Vendor" FORCE)
