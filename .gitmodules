@@ -15,7 +15,7 @@
 [submodule "rocm-cmake"]
 	path = base/rocm-cmake
 	url = https://github.com/ROCm/rocm-cmake.git
-	branch = mainline
+	# branch = mainline
 [submodule "rocm-libraries"]
 	path = rocm-libraries
 	url = https://github.com/st-czc/rocm-libraries
