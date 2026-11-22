@@ -3,7 +3,8 @@
 
 set -euo pipefail
 
-THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 SUBMODULES=(
   rocm-cmake
@@ -18,13 +19,13 @@ SUBMODULES=(
 update_submodule() {
   local name="$1" path url branch gitlink subdir
 
-  path="$(git config -f "$THIS_DIR/.gitmodules" --get "submodule.${name}.path")"
-  url="$(git config -f "$THIS_DIR/.gitmodules" --get "submodule.${name}.url")"
-  branch="$(git config -f "$THIS_DIR/.gitmodules" --get "submodule.${name}.branch" 2>/dev/null || true)"
-  gitlink="$(git -C "$THIS_DIR" rev-parse ":${path}")"
-  subdir="$THIS_DIR/$path"
+  path="$(git config -f "$ROOT_DIR/.gitmodules" --get "submodule.${name}.path")"
+  url="$(git config -f "$ROOT_DIR/.gitmodules" --get "submodule.${name}.url")"
+  branch="$(git config -f "$ROOT_DIR/.gitmodules" --get "submodule.${name}.branch" 2>/dev/null || true)"
+  gitlink="$(git -C "$ROOT_DIR" rev-parse ":${path}")"
+  subdir="$ROOT_DIR/$path"
 
-  git -C "$THIS_DIR" submodule init -- "$path"
+  git -C "$ROOT_DIR" submodule init -- "$path"
 
   if [ ! -e "$subdir/.git" ]; then
     git init -q "$subdir"
@@ -42,7 +43,7 @@ update_submodule() {
 
   git -C "$subdir" checkout -q --detach "$gitlink"
 
-  git -C "$THIS_DIR" submodule absorbgitdirs -- "$path"
+  git -C "$ROOT_DIR" submodule absorbgitdirs -- "$path"
 }
 
 for name in "${SUBMODULES[@]}"; do
